@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: smart-exhibition-booth
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: FLASK_ENV
+        value: showcase
+      - key: APP_MODE
+        value: demo
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AI_ENABLED
+        value: false
+      - key: INSTALL_AI
+        value: false
+      - key: SEED_INITIAL_DATA
+        value: true
+      - key: BOOTH_ID
+        value: portfolio_showcase
+      - key: ADMIN_BOOTSTRAP_USERNAME
+        sync: false
+      - key: ADMIN_BOOTSTRAP_EMAIL
+        sync: false
+      - key: ADMIN_BOOTSTRAP_PASSWORD
+        sync: false

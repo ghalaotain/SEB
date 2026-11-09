@@ -114,7 +114,32 @@ class ProductionConfig(Config):
             )
 
 
+class ShowcaseConfig(Config):
+    """Secure hosted demo configuration with ephemeral sample data."""
+
+    DEBUG = False
+    SESSION_COOKIE_SECURE = True
+
+    @classmethod
+    def validate(cls) -> None:
+        if not cls.SECRET_KEY:
+            raise RuntimeError(
+                "SECRET_KEY is required."
+            )
+
+        if len(cls.SECRET_KEY) < 32:
+            raise RuntimeError(
+                "SECRET_KEY must contain at least 32 characters."
+            )
+
+        if not cls.DEMO_MODE:
+            raise RuntimeError(
+                "Showcase mode requires APP_MODE=demo."
+            )
+
+
 CONFIGS = {
     "development": DevelopmentConfig,
     "production": ProductionConfig,
+    "showcase": ShowcaseConfig,
 }

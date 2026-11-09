@@ -37,7 +37,10 @@ def create_app() -> Flask:
         config_class.database_uri()
     )
 
-    if environment == "production":
+    if environment in {
+        "production",
+        "showcase",
+    }:
         config_class.validate()
 
     if not app.config.get("SECRET_KEY"):
