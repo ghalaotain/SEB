@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}
+Smart Exhibition Booth — Personalized Ads
+{% endblock %}
+
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<section class="home-hero">
+    <div class="home-hero__content">
+        <div class="status-label">
+            <span></span>
+            Privacy-conscious AI experience
+        </div>
+
+        <h1>
+            Advertising that adapts
+            <em>without identifying you.</em>
+        </h1>
+
+        <p class="home-hero__description">
+            An intelligent exhibition booth that estimates anonymous
+            visitor demographics and presents a more relevant
+            advertisement in real time.
+        </p>
+
+        <div class="home-hero__actions">
+            <a
+                class="button button--primary"
+                href="{{ url_for('pages.display_ads') }}"
+            >
+                Open live display
+                <span aria-hidden="true">↗</span>
+            </a>
+
+            <a
+                class="button button--secondary"
+                href="{{ url_for('pages.display_map') }}"
+            >
+                Explore store map
+            </a>
+        </div>
+
+        <ul class="privacy-list">
+            <li>No facial recognition</li>
+            <li>No face images stored</li>
+            <li>Camera starts with consent</li>
+        </ul>
+    </div>
+
+    <div class="booth-preview" aria-label="Booth screen preview">
+        <div class="booth-preview__camera">
+            <span></span>
+        </div>
+
+        <div class="booth-preview__screen">
+            <header>
+                <strong>SEB / LIVE</strong>
+                <span>General carousel</span>
+            </header>
+
+            <div class="preview-content">
+                <div class="preview-message">
+                    <small>EXHIBITION INTELLIGENCE</small>
+
+                    <h2>
+                        A display that adapts when you ask it to.
+                    </h2>
+                </div>
+
+                <div class="preview-ads" aria-hidden="true">
+                    <article class="preview-ad preview-ad--main">
+                        <span>01</span>
+                        <strong>Future mobility</strong>
+                    </article>
+
+                    <article class="preview-ad preview-ad--cyan">
+                        <span>02</span>
+                        <strong>Retail</strong>
+                    </article>
+
+                    <article class="preview-ad preview-ad--pink">
+                        <span>03</span>
+                        <strong>Experience</strong>
+                    </article>
+                </div>
+            </div>
+
+            <footer>
+                <span>Ready for visitor interaction</span>
+
+                <span class="ready-signal">
+                    <i></i>
+                    System ready
+                </span>
+            </footer>
+
+            <div class="scan-line" aria-hidden="true"></div>
+        </div>
+
+        <div class="booth-preview__stand"></div>
+        <div class="booth-preview__base"></div>
+    </div>
+</section>
+
+<section class="metrics" aria-label="System capabilities">
+    <article>
+        <strong>01</strong>
+        <span>Visitor-controlled camera</span>
+    </article>
+
+    <article>
+        <strong>02</strong>
+        <span>Age and gender estimation</span>
+    </article>
+
+    <article>
+        <strong>03</strong>
+        <span>Personalized ad selection</span>
+    </article>
+
+    <article>
+        <strong>04</strong>
+        <span>Anonymous analytics</span>
+    </article>
+</section>
+
+<section class="workflow">
+    <div class="section-heading">
+        <span>Visitor journey</span>
+
+        <h2>
+            One clear interaction from consent to direction.
+        </h2>
+
+        <p>
+            The visitor remains in control. Analysis begins only
+            after pressing Start and ends as soon as the matching
+            advertisement is selected.
+        </p>
+    </div>
+
+    <ol class="workflow__steps">
+        <li>
+            <span class="step-number">01</span>
+
+            <div>
+                <h3>Start the experience</h3>
+
+                <p>
+                    The general advertisement carousel stays active
+                    until the visitor requests personalized analysis.
+                </p>
+            </div>
+        </li>
+
+        <li>
+            <span class="step-number">02</span>
+
+            <div>
+                <h3>Analyze one temporary frame</h3>
+
+                <p>
+                    OpenCV confirms that a face is visible. DeepFace
+                    estimates age and gender without identifying the
+                    visitor.
+                </p>
+            </div>
+        </li>
+
+        <li>
+            <span class="step-number">03</span>
+
+            <div>
+                <h3>Display and guide</h3>
+
+                <p>
+                    The selected advertisement appears with an
+                    optional QR code and directions to its store.
+                </p>
+            </div>
+        </li>
+    </ol>
+</section>
+
+<section class="module-grid">
+    <article class="module module--display">
+        <span>Visitor display</span>
+
+        <h2>Responsive advertising screen</h2>
+
+        <p>
+            General campaigns, clear analysis states, personalized
+            advertisements, QR codes, and automatic return to the
+            carousel.
+        </p>
+
+        <a href="{{ url_for('pages.display_ads') }}">
+            Preview the display
+        </a>
+    </article>
+
+    <article class="module module--map">
+        <span>Navigation</span>
+
+        <h2>Store map</h2>
+
+        <p>
+            Searchable locations and category filters help visitors
+            reach the advertised product.
+        </p>
+
+        <a href="{{ url_for('pages.display_map') }}">
+            Open the map
+        </a>
+    </article>
+
+    <article class="module module--admin">
+        <span>Organizer tools</span>
+
+        <h2>Analytics dashboard</h2>
+
+        <p>
+            Visitor trends, demographic distributions, advertisement
+            views, and campaign management.
+        </p>
+
+        <a href="{{ url_for('pages.admin_dashboard') }}">
+            Open admin area
+        </a>
+    </article>
+</section>
+
+<section class="privacy-banner">
+    <div class="privacy-banner__number">
+        <strong>0</strong>
+        <span>stored faces</span>
+    </div>
+
+    <div>
+        <span class="privacy-banner__label">
+            Privacy by design
+        </span>
+
+        <h2>
+            Demographic context without personal identity.
+        </h2>
+
+        <p>
+            Frames are processed temporarily in memory. The system
+            does not save photographs, build facial embeddings, or
+            recognize individual visitors.
+        </p>
+    </div>
+</section>
+
+<section class="home-cta">
+    <div>
+        <span>Exhibition mode</span>
+        <h2>Ready to see the booth in action?</h2>
+    </div>
+
+    <a
+        class="button button--light"
+        href="{{ url_for('pages.display_ads') }}"
+    >
+        Launch display
+    </a>
+</section>
+{% endblock %}

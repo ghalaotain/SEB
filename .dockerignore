@@ -1,0 +1,16 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+.env
+.env.*
+!.env.example
+instance
+app/static/uploads
+.deepface
+models
+work
+_wrong_structure_backup_*
+home.html.txt
+tests

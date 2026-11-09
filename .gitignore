@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Flask instance data
+instance/*
+!instance/.gitkeep
+
+# Uploaded files
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+
+# AI model files
+.deepface/
+models/
+*.h5
+*.onnx
+*.pt
+
+# Editors
+.vscode/
+.idea/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+work/
+
+# Local recovery copies and stray drafts
+_wrong_structure_backup_*/
+home.html.txt

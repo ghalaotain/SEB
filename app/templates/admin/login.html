@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin sign in — Smart Exhibition Booth
+{% endblock %}
+
+{% block body_class %}
+admin-login-page
+{% endblock %}
+
+{% block head %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/admin-login.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<section class="admin-auth">
+    <div class="admin-auth__visual">
+        <div class="access-signal" aria-hidden="true">
+            <span class="access-signal__outer"></span>
+            <span class="access-signal__middle"></span>
+            <span class="access-signal__core"></span>
+        </div>
+
+        <div class="admin-auth__visual-copy">
+            <span>Protected administration</span>
+
+            <h1>
+                Exhibition intelligence stays behind
+                controlled access.
+            </h1>
+
+            <p>
+                Manage advertisements, store locations,
+                and anonymous visitor analytics.
+            </p>
+        </div>
+
+        <div class="access-status">
+            <span>
+                <i></i>
+                Session protection enabled
+            </span>
+
+            <span>
+                No visitor photographs stored
+            </span>
+        </div>
+    </div>
+
+    <div class="admin-auth__form-panel">
+        <div class="admin-auth__form-heading">
+            <span>SEB administration</span>
+            <h2>Sign in</h2>
+
+            <p>
+                Use the administrator account created
+                from the secure command line.
+            </p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="auth-messages">
+                    {% for category, message in messages %}
+                        <div class="auth-message auth-message--{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form
+            class="admin-login-form"
+            method="post"
+            novalidate
+        >
+            {{ form.hidden_tag() }}
+
+            <div class="auth-field">
+                {{ form.username.label }}
+
+                {{ form.username(
+                    autocomplete="username",
+                    placeholder="Enter username"
+                ) }}
+
+                {% if form.username.errors %}
+                    <ul class="auth-field__errors">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="auth-field">
+                {{ form.password.label }}
+
+                {{ form.password(
+                    autocomplete="current-password",
+                    placeholder="Enter password"
+                ) }}
+
+                {% if form.password.errors %}
+                    <ul class="auth-field__errors">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {{ form.submit(
+                class="admin-login-button"
+            ) }}
+        </form>
+
+        <div class="admin-auth__help">
+            <a href="{{ url_for('pages.home') }}">
+                Return to visitor experience
+            </a>
+
+            <span>
+                Five login attempts allowed per minute.
+            </span>
+        </div>
+    </div>
+</section>
+{% endblock %}

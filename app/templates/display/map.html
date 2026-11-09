@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="description"
+        content="Interactive store map for the Smart Exhibition Booth."
+    >
+
+    <title>Store Map — Smart Exhibition Booth</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/map.css') }}"
+    >
+</head>
+
+<body>
+    <div id="mapApp" class="map-app">
+        <header class="map-header">
+            <a
+                class="map-brand"
+                href="{{ url_for('pages.home') }}"
+                aria-label="Return to home page"
+            >
+                <span class="map-brand__mark" aria-hidden="true">
+                    <i></i>
+                </span>
+
+                <span>
+                    <strong>SEB</strong>
+                    <small>Exhibition navigation</small>
+                </span>
+            </a>
+
+            <nav class="map-navigation" aria-label="Main navigation">
+                <a href="{{ url_for('pages.display_ads') }}">
+                    Live display
+                </a>
+
+                <a href="{{ url_for('pages.home') }}">
+                    Home
+                </a>
+            </nav>
+        </header>
+
+        <main class="map-main">
+            <aside class="store-directory">
+                <div class="directory-heading">
+                    <span>Visitor directory</span>
+                    <h1>Find your destination</h1>
+
+                    <p>
+                        Search stores and explore locations inside
+                        the exhibition hall.
+                    </p>
+                </div>
+
+                <label class="store-search">
+                    <span class="visually-hidden">
+                        Search stores
+                    </span>
+
+                    <span class="store-search__icon" aria-hidden="true">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="storeSearch"
+                        type="search"
+                        placeholder="Search stores or categories"
+                        autocomplete="off"
+                    >
+                </label>
+
+                <div
+                    id="categoryFilters"
+                    class="category-filters"
+                    aria-label="Store categories"
+                >
+                    <button
+                        class="is-active"
+                        type="button"
+                        data-category="all"
+                    >
+                        All
+                    </button>
+
+                    <button type="button" data-category="technology">
+                        Technology
+                    </button>
+
+                    <button type="button" data-category="fashion">
+                        Fashion
+                    </button>
+
+                    <button type="button" data-category="food">
+                        Food
+                    </button>
+
+                    <button type="button" data-category="services">
+                        Services
+                    </button>
+                </div>
+
+                <div class="directory-summary">
+                    <span id="storeCount">0 destinations</span>
+
+                    <button
+                        id="clearSelectionButton"
+                        type="button"
+                        hidden
+                    >
+                        Clear selection
+                    </button>
+                </div>
+
+                <div
+                    id="storeList"
+                    class="store-list"
+                    aria-live="polite"
+                >
+                    <p class="store-list__loading">
+                        Loading exhibition locations…
+                    </p>
+                </div>
+            </aside>
+
+            <section
+                class="map-workspace"
+                aria-labelledby="mapTitle"
+            >
+                <div class="map-workspace__heading">
+                    <div>
+                        <span>Exhibition floor</span>
+                        <h2 id="mapTitle">Main hall map</h2>
+                    </div>
+
+                    <div class="map-legend" aria-label="Map legend">
+                        <span>
+                            <i class="legend-dot legend-dot--available"></i>
+                            Available store
+                        </span>
+
+                        <span>
+                            <i class="legend-dot legend-dot--selected"></i>
+                            Selected destination
+                        </span>
+                    </div>
+                </div>
+
+                <div
+                    id="campaignNotice"
+                    class="campaign-notice"
+                    hidden
+                >
+                    <div>
+                        <span>Recommended advertisement location</span>
+
+                        <strong id="campaignNoticeTitle">
+                            Selected destination
+                        </strong>
+                    </div>
+
+                    <button
+                        id="dismissCampaignNotice"
+                        type="button"
+                        aria-label="Dismiss recommendation"
+                    >
+                        ×
+                    </button>
+                </div>
+
+                <div class="floor-map-wrapper">
+                    <div
+                        id="floorMap"
+                        class="floor-map"
+                        aria-label="Interactive exhibition floor map"
+                    >
+                        <div class="floor-map__entrance">
+                            <span>Entrance</span>
+                            <i aria-hidden="true"></i>
+                        </div>
+
+                        <div class="floor-map__aisle floor-map__aisle--horizontal">
+                            <span>Main aisle</span>
+                        </div>
+
+                        <div class="floor-map__aisle floor-map__aisle--vertical">
+                            <span>Central aisle</span>
+                        </div>
+
+                        <div
+                            id="mapLocations"
+                            class="map-locations"
+                        ></div>
+
+                        <div class="information-point">
+                            <span aria-hidden="true">i</span>
+                            Information
+                        </div>
+
+                        <div class="you-are-here">
+                            <i aria-hidden="true"></i>
+                            <span>You are here</span>
+                        </div>
+                    </div>
+
+                    <div class="map-instructions">
+                        Select a location to view store details
+                        and QR directions.
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="map-footer">
+            <span>
+                Smart Exhibition Booth navigation
+            </span>
+
+            <span class="map-status">
+                <i></i>
+                <strong id="mapStatus">Map ready</strong>
+            </span>
+        </footer>
+    </div>
+
+    <dialog
+        id="storeDialog"
+        class="store-dialog"
+        aria-labelledby="storeDialogTitle"
+    >
+        <button
+            id="closeStoreDialog"
+            class="dialog-close"
+            type="button"
+            aria-label="Close store details"
+        >
+            ×
+        </button>
+
+        <div
+            id="storeDialogIcon"
+            class="store-dialog__icon"
+            aria-hidden="true"
+        >
+            S
+        </div>
+
+        <span id="storeDialogCategory" class="store-dialog__category">
+            Store category
+        </span>
+
+        <h2 id="storeDialogTitle">Store name</h2>
+
+        <p id="storeDialogDescription">
+            Store description.
+        </p>
+
+        <dl class="store-information">
+            <div>
+                <dt>Map location</dt>
+                <dd id="storeDialogLocation">—</dd>
+            </div>
+
+            <div>
+                <dt>Opening hours</dt>
+                <dd id="storeDialogHours">—</dd>
+            </div>
+        </dl>
+
+        <div class="store-dialog__actions">
+            <button
+                id="showOnMapButton"
+                class="map-primary-action"
+                type="button"
+            >
+                Show on map
+            </button>
+
+            <button
+                id="showQrButton"
+                class="map-secondary-action"
+                type="button"
+            >
+                Show QR directions
+            </button>
+        </div>
+    </dialog>
+
+    <dialog
+        id="qrDialog"
+        class="qr-dialog"
+        aria-labelledby="qrDialogTitle"
+    >
+        <button
+            id="closeQrDialog"
+            class="dialog-close"
+            type="button"
+            aria-label="Close QR code"
+        >
+            ×
+        </button>
+
+        <span>Mobile directions</span>
+
+        <h2 id="qrDialogTitle">
+            Scan to open this location
+        </h2>
+
+        <div class="qr-placeholder">
+            <div id="qrCode"></div>
+        </div>
+
+        <p id="qrLocationText">
+            Exhibition destination
+        </p>
+
+        <button
+            id="copyLocationButton"
+            class="map-secondary-action"
+            type="button"
+        >
+            Copy location link
+        </button>
+    </dialog>
+
+    <div
+        id="mapMessage"
+        class="map-message"
+        role="status"
+        aria-live="polite"
+        hidden
+    ></div>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+        defer
+    ></script>
+
+    <script
+        src="{{ url_for('static', filename='js/display-map.js') }}"
+        defer
+    ></script>
+</body>
+</html>

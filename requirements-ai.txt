@@ -1,0 +1,5 @@
+# Install these only when enabling real camera analysis.
+# The main application continues to work in demo mode without them.
+opencv-python-headless
+deepface
+tf-keras

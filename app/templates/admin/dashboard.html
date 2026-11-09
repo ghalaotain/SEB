@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="description"
+        content="Smart Exhibition Booth administration dashboard."
+    >
+
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        Admin Dashboard — Smart Exhibition Booth
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin-dashboard.css') }}"
+    >
+</head>
+
+<body>
+    <div class="dashboard-app">
+        <aside class="admin-sidebar">
+            <a
+                class="admin-brand"
+                href="{{ url_for('pages.admin_dashboard') }}"
+            >
+                <span class="admin-brand__mark" aria-hidden="true">
+                    <i></i>
+                </span>
+
+                <span>
+                    <strong>SEB</strong>
+                    <small>Control room</small>
+                </span>
+            </a>
+
+            <nav
+                class="admin-navigation"
+                aria-label="Admin navigation"
+            >
+                <a
+                    class="is-active"
+                    href="{{ url_for('pages.admin_dashboard') }}"
+                >
+                    <span aria-hidden="true">◫</span>
+                    Overview
+                </a>
+
+                <a href="#advertisementsPanel">
+                    <span aria-hidden="true">▣</span>
+                    Advertisements
+                </a>
+
+                <a href="{{ url_for('pages.display_ads') }}">
+                    <span aria-hidden="true">▷</span>
+                    Live display
+                </a>
+
+                <a href="{{ url_for('pages.display_map') }}">
+                    <span aria-hidden="true">⌖</span>
+                    Store map
+                </a>
+
+                <a href="{{ url_for('pages.home') }}">
+                    <span aria-hidden="true">⌂</span>
+                    Visitor home
+                </a>
+            </nav>
+
+            <div class="admin-sidebar__account">
+                <span>Signed in as</span>
+
+                <strong>
+                    {{ current_user.username }}
+                </strong>
+
+                <form
+                    method="post"
+                    action="{{ url_for('auth.logout') }}"
+                >
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    <button type="submit">
+                        Sign out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div>
+                    <span class="dashboard-header__context">
+                        Exhibition intelligence
+                    </span>
+
+                    <h1>Operations overview</h1>
+
+                    <p>
+                        Anonymous visitor activity and
+                        advertisement performance.
+                    </p>
+                </div>
+
+                <div class="dashboard-header__actions">
+                    <span
+                        id="dashboardMode"
+                        class="dashboard-mode"
+                    >
+                        Demo mode
+                    </span>
+
+                    <button
+                        id="refreshDashboard"
+                        class="refresh-button"
+                        type="button"
+                    >
+                        Refresh data
+                    </button>
+                </div>
+            </header>
+
+            <div
+                id="dashboardError"
+                class="dashboard-error"
+                role="alert"
+                hidden
+            >
+                <strong>Dashboard data unavailable</strong>
+
+                <span id="dashboardErrorText">
+                    Refresh the page and try again.
+                </span>
+            </div>
+
+            <section
+                class="metric-strip"
+                aria-label="Visitor summary"
+            >
+                <article class="metric metric--primary">
+                    <span>Total visitors</span>
+
+                    <strong id="totalVisitors">—</strong>
+
+                    <small>
+                        Anonymous interactions recorded
+                    </small>
+                </article>
+
+                <article class="metric">
+                    <span>Visitors today</span>
+
+                    <strong id="todayVisitors">—</strong>
+
+                    <small>
+                        Riyadh local date
+                    </small>
+                </article>
+
+                <article class="metric metric--split">
+                    <span>Gender estimates</span>
+
+                    <div>
+                        <strong id="maleVisitors">—</strong>
+                        <small>Male</small>
+                    </div>
+
+                    <div>
+                        <strong id="femaleVisitors">—</strong>
+                        <small>Female</small>
+                    </div>
+                </article>
+
+                <article class="metric">
+                    <span>Active advertisements</span>
+
+                    <strong id="activeAdvertisements">—</strong>
+
+                    <small>
+                        Available for selection
+                    </small>
+                </article>
+
+                <article class="metric">
+                    <span>Advertisement views</span>
+
+                    <strong id="totalAdvertisementViews">—</strong>
+
+                    <small>
+                        Personalized displays
+                    </small>
+                </article>
+            </section>
+
+            <section class="analytics-layout">
+                <article class="analytics-panel analytics-panel--trend">
+                    <header class="panel-heading">
+                        <div>
+                            <span>Visitor activity</span>
+                            <h2>Daily interactions</h2>
+                        </div>
+
+                        <span id="lastUpdated">
+                            Waiting for data
+                        </span>
+                    </header>
+
+                    <div class="chart-container chart-container--trend">
+                        <canvas
+                            id="dailyVisitorsChart"
+                            aria-label="Daily visitor interactions chart"
+                        ></canvas>
+                    </div>
+                </article>
+
+                <article class="analytics-panel analytics-panel--gender">
+                    <header class="panel-heading">
+                        <div>
+                            <span>Demographics</span>
+                            <h2>Gender distribution</h2>
+                        </div>
+                    </header>
+
+                    <div class="chart-container chart-container--donut">
+                        <canvas
+                            id="genderChart"
+                            aria-label="Gender distribution chart"
+                        ></canvas>
+                    </div>
+                </article>
+
+                <article class="analytics-panel analytics-panel--age">
+                    <header class="panel-heading">
+                        <div>
+                            <span>Audience profile</span>
+                            <h2>Age groups</h2>
+                        </div>
+                    </header>
+
+                    <div class="chart-container">
+                        <canvas
+                            id="ageGroupsChart"
+                            aria-label="Age group distribution chart"
+                        ></canvas>
+                    </div>
+                </article>
+
+                <article class="analytics-panel analytics-panel--ads">
+                    <header class="panel-heading">
+                        <div>
+                            <span>Campaign performance</span>
+                            <h2>Most viewed advertisements</h2>
+                        </div>
+                    </header>
+
+                    <div class="chart-container">
+                        <canvas
+                            id="advertisementViewsChart"
+                            aria-label="Advertisement views chart"
+                        ></canvas>
+                    </div>
+                </article>
+            </section>
+
+            <section
+                id="advertisementsPanel"
+                class="advertisements-panel"
+            >
+                <header class="panel-heading">
+                    <div>
+                        <span>Campaign inventory</span>
+                        <h2>Advertisements</h2>
+                    </div>
+
+                    <button
+                        id="addAdvertisementButton"
+                        class="primary-admin-button"
+                        type="button"
+                    >
+                        Add advertisement
+                    </button>
+                </header>
+
+                <div class="campaign-toolbar">
+                    <label class="campaign-search">
+                        <span>Search advertisements</span>
+
+                        <input
+                            id="advertisementSearch"
+                            type="search"
+                            placeholder="Search title or category"
+                            autocomplete="off"
+                        >
+                    </label>
+
+                    <label>
+                        <span>Status</span>
+
+                        <select id="advertisementStatusFilter">
+                            <option value="all">All statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </label>
+
+                    <span id="advertisementCount">
+                        0 advertisements
+                    </span>
+                </div>
+
+                <div class="advertisement-table-wrapper">
+                    <table class="advertisement-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Advertisement</th>
+                                <th scope="col">Audience</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Views</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="advertisementTableBody">
+                            <tr>
+                                <td colspan="6">
+                                    Loading advertisements…
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="dashboard-footer">
+                <span>
+                    Only anonymous demographic statistics
+                    are displayed.
+                </span>
+
+                <span class="dashboard-system-status">
+                    <i></i>
+                    System connected
+                </span>
+            </footer>
+        </main>
+    </div>
+
+    <dialog
+        id="advertisementDialog"
+        class="advertisement-dialog"
+        aria-labelledby="advertisementDialogTitle"
+    >
+        <form id="advertisementForm" method="dialog">
+            <header class="dialog-header">
+                <div>
+                    <span>Campaign editor</span>
+
+                    <h2 id="advertisementDialogTitle">
+                        Add advertisement
+                    </h2>
+                </div>
+
+                <button
+                    id="closeAdvertisementDialog"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Close advertisement editor"
+                >
+                    ×
+                </button>
+            </header>
+
+            <input id="advertisementId" type="hidden">
+
+            <div class="form-grid">
+                <label class="form-field form-field--wide">
+                    <span>Title</span>
+
+                    <input
+                        id="advertisementTitle"
+                        name="title"
+                        type="text"
+                        maxlength="200"
+                        required
+                    >
+                </label>
+
+                <label class="form-field form-field--wide">
+                    <span>Description</span>
+
+                    <textarea
+                        id="advertisementDescription"
+                        name="description"
+                        rows="3"
+                    ></textarea>
+                </label>
+
+                <label class="form-field">
+                    <span>Category</span>
+
+                    <input
+                        id="advertisementCategory"
+                        name="category"
+                        type="text"
+                        maxlength="80"
+                        placeholder="Technology"
+                        required
+                    >
+                </label>
+
+                <label class="form-field">
+                    <span>Target gender</span>
+
+                    <select
+                        id="advertisementGender"
+                        name="target_gender"
+                    >
+                        <option value="all">All visitors</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </label>
+
+                <label class="form-field">
+                    <span>Minimum age</span>
+
+                    <input
+                        id="advertisementAgeMin"
+                        name="target_age_min"
+                        type="number"
+                        min="0"
+                        max="120"
+                        inputmode="numeric"
+                    >
+                </label>
+
+                <label class="form-field">
+                    <span>Maximum age</span>
+
+                    <input
+                        id="advertisementAgeMax"
+                        name="target_age_max"
+                        type="number"
+                        min="0"
+                        max="120"
+                        inputmode="numeric"
+                    >
+                </label>
+
+                <label class="form-field">
+                    <span>Visual theme</span>
+
+                    <select
+                        id="advertisementTheme"
+                        name="theme"
+                    >
+                        <option value="violet">Violet</option>
+                        <option value="cyan">Cyan</option>
+                        <option value="pink">Pink</option>
+                        <option value="yellow">Yellow</option>
+                    </select>
+                </label>
+
+                <label class="form-field">
+                    <span>Store</span>
+
+                    <select
+                        id="advertisementStore"
+                        name="store_id"
+                    >
+                        <option value="">No store assigned</option>
+                    </select>
+                </label>
+
+                <div class="form-field form-field--wide">
+                    <span>Campaign image</span>
+
+                    <div class="image-upload-field">
+                        <div class="image-upload-preview">
+                            <img
+                                id="advertisementImagePreview"
+                                alt="Advertisement image preview"
+                                hidden
+                            >
+
+                            <span id="advertisementImagePlaceholder">
+                                No image selected
+                            </span>
+                        </div>
+
+                        <div class="image-upload-controls">
+                            <label class="file-picker-button">
+                                <input
+                                    id="advertisementImageFile"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                >
+
+                                Choose image
+                            </label>
+
+                            <small>
+                                JPEG, PNG, or WebP · Maximum 5 MB
+                            </small>
+                        </div>
+                    </div>
+
+                    <input
+                        id="advertisementImagePath"
+                        name="image_path"
+                        type="text"
+                        maxlength="500"
+                        placeholder="Uploaded image path appears here"
+                        readonly
+                    >
+                </div>
+
+                <label class="form-field form-field--wide">
+                    <span>QR destination URL</span>
+
+                    <input
+                        id="advertisementQrUrl"
+                        name="qr_code_url"
+                        type="url"
+                        maxlength="500"
+                        placeholder="https://example.com/offer"
+                    >
+                </label>
+
+                <label class="form-field form-field--wide">
+                    <span>Map location</span>
+
+                    <input
+                        id="advertisementMapLocation"
+                        name="map_location"
+                        type="text"
+                        maxlength="150"
+                        placeholder="Filled automatically from the store"
+                    >
+                </label>
+
+                <label class="status-switch form-field--wide">
+                    <input
+                        id="advertisementIsActive"
+                        name="is_active"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <span aria-hidden="true"></span>
+
+                    <strong>Active and available for selection</strong>
+                </label>
+            </div>
+
+            <p
+                id="advertisementFormError"
+                class="form-error"
+                role="alert"
+                hidden
+            ></p>
+
+            <footer class="dialog-actions">
+                <button
+                    id="cancelAdvertisementButton"
+                    class="secondary-admin-button"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="saveAdvertisementButton"
+                    class="primary-admin-button"
+                    type="submit"
+                >
+                    Save advertisement
+                </button>
+            </footer>
+        </form>
+    </dialog>
+
+    <dialog
+        id="deleteAdvertisementDialog"
+        class="confirmation-dialog"
+        aria-labelledby="deleteAdvertisementTitle"
+    >
+        <h2 id="deleteAdvertisementTitle">
+            Delete advertisement?
+        </h2>
+
+        <p>
+            <strong id="deleteAdvertisementName"></strong>
+            will be permanently removed. Anonymous historical
+            statistics will remain available.
+        </p>
+
+        <div class="dialog-actions">
+            <button
+                id="cancelDeleteAdvertisement"
+                class="secondary-admin-button"
+                type="button"
+            >
+                Keep advertisement
+            </button>
+
+            <button
+                id="confirmDeleteAdvertisement"
+                class="danger-admin-button"
+                type="button"
+            >
+                Delete permanently
+            </button>
+        </div>
+    </dialog>
+
+    <div
+        id="adminToast"
+        class="admin-toast"
+        role="status"
+        aria-live="polite"
+        hidden
+    ></div>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        defer
+    ></script>
+
+    <script
+        src="{{ url_for('static', filename='js/admin-dashboard.js') }}"
+        defer
+    ></script>
+</body>
+</html>

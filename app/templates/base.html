@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="description"
+        content="AI-powered exhibition booth for privacy-conscious personalized advertising."
+    >
+
+    <title>
+        {% block title %}Smart Exhibition Booth{% endblock %}
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#main-content">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a
+                class="brand"
+                href="{{ url_for('pages.home') }}"
+                aria-label="Smart Exhibition Booth home"
+            >
+                <span class="brand__mark" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                </span>
+
+                <span class="brand__name">
+                    <strong>SEB</strong>
+                    <small>Smart Exhibition Booth</small>
+                </span>
+            </a>
+
+            <nav
+                class="site-nav"
+                aria-label="Main navigation"
+            >
+                <a href="{{ url_for('pages.home') }}">
+                    Home
+                </a>
+
+                <a href="{{ url_for('pages.display_ads') }}">
+                    Live display
+                </a>
+
+                <a href="{{ url_for('pages.display_map') }}">
+                    Store map
+                </a>
+
+                <a
+                    class="site-nav__admin"
+                    href="{{ url_for('pages.admin_dashboard') }}"
+                >
+                    Admin
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <div>
+                <strong>Smart Exhibition Booth</strong>
+
+                <p>
+                    Personalized advertising without identity
+                    recognition or stored facial images.
+                </p>
+            </div>
+
+            <p class="site-footer__meta">
+                Graduation project · King Khalid University · 2026
+            </p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
