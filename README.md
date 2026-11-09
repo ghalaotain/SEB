@@ -6,6 +6,8 @@ and QR destinations, and records anonymous interaction statistics.
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fghalaotain%2FSEB)
 
+**Live showcase:** [smart-exhibition-booth.onrender.com](https://smart-exhibition-booth.onrender.com)
+
 ## Interface preview
 
 ### Landing page
