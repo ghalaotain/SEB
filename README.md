@@ -4,6 +4,8 @@ A privacy-conscious exhibition booth that estimates an anonymous visitor's
 age group and gender, selects a suitable advertisement, shows store locations
 and QR destinations, and records anonymous interaction statistics.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fghalaotain%2FSEB)
+
 ## Interface preview
 
 ### Landing page
@@ -151,6 +153,25 @@ AI_MAX_IMAGE_PIXELS=16000000
 
 DeepFace may download model weights during the first analysis. Those model
 files are intentionally excluded from Git.
+
+## One-click showcase deployment
+
+The repository includes a Render Blueprint for a secure portfolio demonstration.
+It runs with production-safe Flask settings, simulated demographic results, and
+automatically seeded exhibition data. Real DeepFace models are intentionally
+disabled on the 512 MB free instance.
+
+1. Click **Deploy to Render** at the top of this README.
+2. Sign in to Render and connect GitHub when prompted.
+3. Provide the requested administrator username, email, and a password of at
+   least 12 characters. These values remain in Render and are not committed.
+4. Review the free web service and apply the Blueprint.
+5. Open the generated `.onrender.com` address after the build completes.
+
+The free instance can take about one minute to wake after 15 minutes of
+inactivity. Its filesystem is ephemeral, so demonstration statistics and local
+uploads reset after a restart. Use the production configuration with a managed
+database and persistent object storage for a durable deployment.
 
 ## Production environment
 

@@ -5,7 +5,7 @@ services:
     plan: free
     region: frankfurt
     healthCheckPath: /api/health
-    autoDeployTrigger: commit
+    autoDeployTrigger: off
     envVars:
       - key: FLASK_ENV
         value: showcase
