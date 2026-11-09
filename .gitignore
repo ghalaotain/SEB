@@ -46,6 +46,7 @@ Thumbs.db
 tmp/
 temp/
 work/
+output/
 
 # Local recovery copies and stray drafts
 _wrong_structure_backup_*/

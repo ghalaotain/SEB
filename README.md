@@ -4,6 +4,20 @@ A privacy-conscious exhibition booth that estimates an anonymous visitor's
 age group and gender, selects a suitable advertisement, shows store locations
 and QR destinations, and records anonymous interaction statistics.
 
+## Interface preview
+
+### Landing page
+
+![Smart Exhibition Booth landing page](docs/screenshots/home.png)
+
+| Personalized advertisement display | Interactive store map |
+| --- | --- |
+| ![Live personalized advertisement display](docs/screenshots/live-display.png) | ![Interactive exhibition store map](docs/screenshots/store-map.png) |
+
+### Protected administration
+
+![Secure administrator sign-in](docs/screenshots/admin-login.png)
+
 ## Main features
 
 - Consent-first browser camera flow.
@@ -49,6 +63,23 @@ the final implementation were managed as part of the development process.
 - Database: SQLAlchemy with SQLite for demos and MySQL/MariaDB for deployment
 - Authentication: Flask-Login and Flask-WTF CSRF protection
 
+## System workflow
+
+```mermaid
+flowchart LR
+    A[Visitor starts experience] --> B[Camera consent]
+    B --> C[Temporary camera frame]
+    C --> D[OpenCV face detection]
+    D --> E[DeepFace age and gender estimation]
+    E --> F[Demographic advertisement selection]
+    F --> G[Advertisement and QR destination]
+    G --> H[Anonymous interaction statistics]
+    C -. never written to disk .-> I[Frame discarded]
+```
+
+The public visitor flow and administrator area are separated. Analytics and
+advertisement-management APIs require an authenticated administrator session.
+
 ## Privacy design
 
 The camera starts only after the visitor gives consent. One temporary frame is
@@ -56,6 +87,21 @@ sent to the server for demographic estimation and is not written to disk. The
 system does not identify visitors and stores only the minimum anonymous values
 needed for statistics: estimated age, gender, age group, booth, advertisement,
 analysis mode, and display time.
+
+## API overview
+
+| Method | Endpoint | Purpose | Access |
+| --- | --- | --- | --- |
+| `GET` | `/api/health` | Application and AI dependency status | Public |
+| `GET` | `/api/ads` | Active general advertisements | Public |
+| `GET` | `/api/stores` | Searchable exhibition store directory | Public |
+| `POST` | `/api/analyze` | Temporary demographic analysis and ad selection | Public, rate limited |
+| `GET` | `/api/statistics` | Visitor and campaign summary | Administrator |
+| `GET` | `/api/statistics/demographics` | Gender and age-group analytics | Administrator |
+| `GET` | `/api/statistics/advertisements` | Advertisement performance | Administrator |
+| `GET/POST` | `/api/advertisements` | List or create advertisements | Administrator |
+| `PUT/DELETE` | `/api/advertisements/<id>` | Update or delete an advertisement | Administrator |
+| `PATCH` | `/api/advertisements/<id>/status` | Activate or pause an advertisement | Administrator |
 
 ## Local setup
 
