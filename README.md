@@ -16,6 +16,31 @@ and QR destinations, and records anonymous interaction statistics.
 - Anonymous visitor analytics with Chart.js.
 - SQLite demo mode and MySQL-compatible production configuration.
 
+## Project background and contributions
+
+This system originated as a collaborative graduation project. The graduation
+team contributed to the original concept, research, requirements analysis,
+documentation, and system design.
+
+The current functional software implementation was led, developed, and
+extended by **Ghala Zeed Otani**. This work includes the Flask application,
+frontend experience, OpenCV and DeepFace integration, privacy-conscious camera
+flow, personalized advertisement selection, administrator dashboard,
+advertisement management, analytics, interactive store map, image uploads,
+testing, and deployment preparation.
+
+AI-assisted development tools were used for implementation support, debugging,
+code review, and documentation. Technical decisions, testing, integration, and
+the final implementation were managed as part of the development process.
+
+### Graduation project team
+
+- **Lina Mohammed Asiri**
+- **Wejdan Sulaiman Alshardi**
+- **Arwa Abdullah Alghamdi**
+- **Ghala Zeed Otani** — Lead developer of the extended software implementation
+- **Norah Ali Abdullah**
+
 ## Technology
 
 - Frontend: HTML, CSS, JavaScript, Chart.js
