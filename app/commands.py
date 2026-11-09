@@ -1,8 +1,14 @@
+import os
+
 import click
 from flask import Flask
 
 from .extensions import db
-from .models import Advertisement, Store
+from .models import (
+    AdminUser,
+    Advertisement,
+    Store,
+)
 
 
 DEMO_STORES = [
@@ -207,7 +213,7 @@ DEMO_ADVERTISEMENTS = [
         ),
         "category": "Fashion",
         "theme": "pink",
-        "target_gender": "woman",
+        "target_gender": "female",
         "target_age_min": 18,
         "target_age_max": 24,
         "store_location": "Hall A · Store 04",
@@ -221,7 +227,7 @@ DEMO_ADVERTISEMENTS = [
         ),
         "category": "Technology",
         "theme": "violet",
-        "target_gender": "man",
+        "target_gender": "male",
         "target_age_min": 25,
         "target_age_max": 34,
         "store_location": "Hall B · Store 14",
@@ -235,7 +241,7 @@ DEMO_ADVERTISEMENTS = [
         ),
         "category": "Wellbeing",
         "theme": "cyan",
-        "target_gender": "woman",
+        "target_gender": "female",
         "target_age_min": 35,
         "target_age_max": 44,
         "store_location": "Hall C · Store 09",
@@ -308,27 +314,30 @@ def upsert_advertisement(
     return advertisement
 
 
+def save_initial_data() -> None:
+    try:
+        for store_data in DEMO_STORES:
+            upsert_store(store_data)
+
+        db.session.flush()
+
+        for advertisement_data in DEMO_ADVERTISEMENTS:
+            upsert_advertisement(
+                advertisement_data
+            )
+
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+
 def register_commands(app: Flask) -> None:
     @app.cli.command("seed-demo")
     def seed_demo() -> None:
         """Insert or update demo stores and advertisements."""
 
-        try:
-            for store_data in DEMO_STORES:
-                upsert_store(store_data)
-
-            db.session.flush()
-
-            for advertisement_data in DEMO_ADVERTISEMENTS:
-                upsert_advertisement(
-                    advertisement_data
-                )
-
-            db.session.commit()
-
-        except Exception:
-            db.session.rollback()
-            raise
+        save_initial_data()
 
         store_count = db.session.scalar(
             db.select(
@@ -353,3 +362,87 @@ def register_commands(app: Flask) -> None:
         click.echo(
             f"Advertisements: {advertisement_count}"
         )
+
+    @app.cli.command("bootstrap-deployment")
+    def bootstrap_deployment() -> None:
+        """Idempotently seed data and create the first hosted admin."""
+
+        should_seed = os.getenv(
+            "SEED_INITIAL_DATA",
+            "false",
+        ).strip().lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+
+        if should_seed:
+            save_initial_data()
+            click.echo("Initial exhibition data is ready.")
+
+        username = os.getenv(
+            "ADMIN_BOOTSTRAP_USERNAME",
+            "",
+        ).strip().lower()
+        email = os.getenv(
+            "ADMIN_BOOTSTRAP_EMAIL",
+            "",
+        ).strip().lower()
+        password = os.getenv(
+            "ADMIN_BOOTSTRAP_PASSWORD",
+            "",
+        )
+
+        supplied_values = [
+            username,
+            email,
+            password,
+        ]
+
+        if not any(supplied_values):
+            click.echo("No administrator bootstrap requested.")
+            return
+
+        if not all(supplied_values):
+            raise click.ClickException(
+                "All ADMIN_BOOTSTRAP variables are required together."
+            )
+
+        if len(username) < 3 or len(username) > 40:
+            raise click.ClickException(
+                "Bootstrap username must contain 3 to 40 characters."
+            )
+
+        if "@" not in email or len(email) > 255:
+            raise click.ClickException(
+                "Bootstrap email is invalid."
+            )
+
+        if len(password) < 12:
+            raise click.ClickException(
+                "Bootstrap password must contain at least 12 characters."
+            )
+
+        existing_admin = db.session.scalar(
+            db.select(AdminUser).where(
+                db.or_(
+                    AdminUser.username == username,
+                    AdminUser.email == email,
+                )
+            )
+        )
+
+        if existing_admin is not None:
+            click.echo("Hosted administrator already exists.")
+            return
+
+        admin = AdminUser(
+            username=username,
+            email=email,
+            is_active=True,
+        )
+        admin.set_password(password)
+        db.session.add(admin)
+        db.session.commit()
+        click.echo("Hosted administrator created.")

@@ -67,11 +67,21 @@ class Config:
                 f"{database_path.as_posix()}"
             )
 
-        database_url = os.getenv("DATABASE_URL")
+        database_url = (
+            os.getenv("DATABASE_URL")
+            or os.getenv("MYSQL_URL")
+        )
 
         if not database_url:
             raise RuntimeError(
-                "DATABASE_URL is required outside demo mode."
+                "DATABASE_URL or MYSQL_URL is required outside demo mode."
+            )
+
+        if database_url.startswith("mysql://"):
+            database_url = database_url.replace(
+                "mysql://",
+                "mysql+pymysql://",
+                1,
             )
 
         return database_url

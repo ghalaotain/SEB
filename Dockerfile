@@ -7,6 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+ARG INSTALL_AI=false
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         libglib2.0-0 \
@@ -17,7 +19,9 @@ COPY requirements.txt requirements-ai.txt ./
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install -r requirements-ai.txt
+    && if [ "$INSTALL_AI" = "true" ]; then \
+        pip install -r requirements-ai.txt; \
+    fi
 
 COPY . .
 
@@ -27,4 +31,4 @@ RUN mkdir -p \
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "flask --app wsgi.py db upgrade && gunicorn --workers 1 --threads 4 --timeout 180 --bind 0.0.0.0:${PORT} wsgi:app"]
+CMD ["sh", "-c", "flask --app wsgi.py db upgrade && flask --app wsgi.py bootstrap-deployment && gunicorn --workers 1 --threads 4 --timeout 180 --bind 0.0.0.0:${PORT} wsgi:app"]
