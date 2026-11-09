@@ -8,6 +8,8 @@ and QR destinations, and records anonymous interaction statistics.
 
 **Live showcase:** [smart-exhibition-booth.onrender.com](https://smart-exhibition-booth.onrender.com)
 
+**Current release:** `v1.0.0`
+
 ## Interface preview
 
 ### Landing page
